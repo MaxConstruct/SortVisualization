@@ -100,6 +100,20 @@ public class SortAlgorithm {
             ex.printStackTrace();
         }
     }
+    protected void updateScene() {
+        Platform.runLater(()->  {
+            try {
+                scene.getChildren().setAll(node);
+            }
+            catch(IllegalArgumentException ex) {
+                ex.getMessage();
+            }
+        });
+        try { Thread.sleep(delay);}
+        catch(InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
 
 
 }
