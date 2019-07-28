@@ -96,8 +96,16 @@ public class IntegerNode {
             rippler[i] = new JFXRippler(rect);
             rippler[i].setRipplerFill(Color.web(ripplerColor));
             rippler[i].setMaxHeight(h * no);
-            rippler[i].setOnMouseEntered(actionEvent -> labelID.setText("Int: " + no));
-            rippler[i].setOnMouseExited(actionEvent -> labelID.setText("Int: -"));
+            rippler[i].setOnMouseEntered(actionEvent -> {
+                labelID.setText("Int: " + no);
+                labelID.setStyle("-fx-font-size:15;" +
+                        "-fx-text-fill: #F05F57;");
+            });
+            rippler[i].setOnMouseExited(actionEvent -> {
+                labelID.setText("Int: -");
+                labelID.setStyle("-fx-font-size:15;" +
+                        "-fx-text-fill: White;");
+            });
         }
         rectNode.put(integerSize,rippler);
         rectValue.put(integerSize,val);

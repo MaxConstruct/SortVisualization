@@ -144,9 +144,8 @@ final class SceneInitialize {
         });
 
         sortCombo.setOnAction(actionEvent -> {
-            var value = SortType.valueOf(sortCombo.getValue().toString().toUpperCase());
-            System.out.println(value);
-            currentSort = sortAlgorithm.getSortByName(value);
+            //var value = SortType.valueOf(sortCombo.getValue().toString().toUpperCase());
+            //currentSort = sortAlgorithm.getSortByName(SortType.valueOf(sortCombo.getValue().toString().toUpperCase()));
         });
 
         playButton.setOnAction(actionEvent-> {
@@ -162,6 +161,7 @@ final class SceneInitialize {
 
                 //setWhilePlay(true,playButton,playBorder);
                 new Thread(() -> {
+                    currentSort = sortAlgorithm.getSortByName(SortType.valueOf(sortCombo.getValue().toString().toUpperCase()));
                     shuffleButton.setDisable(true);
                     resetButton.setDisable(true);
                     stopwatch.start();
