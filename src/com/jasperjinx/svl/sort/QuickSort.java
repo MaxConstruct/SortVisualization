@@ -2,7 +2,7 @@ package com.jasperjinx.svl.sort;
 
 import com.jasperjinx.svl.visualizer.SortAlgorithm;
 
-public class QuickSort extends SortAlgorithm implements Sort {
+public class QuickSort extends SortAlgorithm implements Sort{
 
     public QuickSort(SortBuilder builder) {
         super(builder);

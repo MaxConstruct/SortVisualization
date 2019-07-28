@@ -95,24 +95,8 @@ final class SceneInitialize {
 
 
         var playButton = ComponentTools.SVGIconButton(SVGIcon.PLAY,"Play");
-        /*
-        var playButton = ComponentTools.SVGIconButton(SVGIcon.PLAY,"Play",
-                "-fx-background-color:rgba(32,40,48,1);" +
-                        "-fx-font-size:15;" +
-                        "-fx-text-fill: White;" +
-                        "-fx-background-radius:25;",
-                "-fx-background-color:rgba(32,40,48,1);" +
-                        "-fx-font-size:15;" +
-                        "-fx-text-fill: #db3236;" +
-                        "-fx-background-radius:25;"
-        );
-         */
-
-
         var playBorder = new HBox(playButton);
-
         var sortCombo = ComponentTools.createCombobox();
-
 
         //var stopButton = ComponentTools.SVGIconButton(SVGIcon.STOP,"Stop");
         var resetButton = ComponentTools.SVGIconButton(SVGIcon.RESET,"Reset");
@@ -160,12 +144,12 @@ final class SceneInitialize {
         });
 
         sortCombo.setOnAction(actionEvent -> {
-            currentSort = sortAlgorithm.getSortByName(SortType.valueOf(sortCombo.getValue().toString().toUpperCase()));
+            var value = SortType.valueOf(sortCombo.getValue().toString().toUpperCase());
+            System.out.println(value);
+            currentSort = sortAlgorithm.getSortByName(value);
         });
 
         playButton.setOnAction(actionEvent-> {
-
-
             if(isStop.compareAndSet(false,true)) {
                 delayBar.setStyle("-fx-background-color: rgba(32,40,48,1);" +
                         "-fx-background-radius: 25;" +
@@ -178,13 +162,15 @@ final class SceneInitialize {
 
                 //setWhilePlay(true,playButton,playBorder);
                 new Thread(() -> {
-
+                    shuffleButton.setDisable(true);
+                    resetButton.setDisable(true);
                     stopwatch.start();
                     currentSort.start();
                     stopwatch.stop();
 
                     playAlertSound();
                     setToPlay(playButton);
+
                     //setWhilePlay(false,playButton,playBorder);
                     delayBar.setStyle("-fx-background-color: rgba(32,40,48,1);" +
                             "-fx-background-radius: 25;" +
@@ -193,6 +179,10 @@ final class SceneInitialize {
                             "-fx-border-radius: 25;"
                     );
                     isStop.set(false);
+                    shuffleButton.setDisable(false);
+                    resetButton.setDisable(false);
+                    moreButton.setDisable(false);
+                    lessButton.setDisable(false);
 
                 }).start();
             } else {
