@@ -1,38 +1,40 @@
 package com.jasperjinx.svl.sort;
 
+import com.jasperjinx.svl.visualizer.RectNode;
 import com.jasperjinx.svl.visualizer.SortAlgorithm;
+import javafx.scene.layout.Pane;
 
-public class QuickSort extends SortAlgorithm implements Sort{
+public class QuickSort extends SortAlgorithm implements Sort {
 
-    public QuickSort(SortBuilder builder) {
-        super(builder);
+    public QuickSort(RectNode[] rectNodes) {
+        super(rectNodes);
     }
-
     @Override
-    public void start() {
-        sort(0,val.length-1);
+    public void start(Pane scene) {
+        setPlay();
+        doSort(scene,0,rectNodes.length-1);
     }
-    private void sort(int low, int high) {
-        if (low < high)
+    private void doSort(Pane scene,int low, int high) {
+        if (low < high && play)
         {
-            int pi = partition(low, high);
-            sort(low, pi-1);
-            sort(pi+1, high);
+            int pi = partition(scene,low, high);
+            doSort(scene,low, pi-1);
+            doSort(scene,pi+1, high);
         }
     }
 
-    private int partition(int low, int high) {
-        int pivot = val[high];
+    private <P extends Pane> int partition(P scene,int low, int high) {
+        RectNode pivot = rectNodes[high];
         int i = (low-1);
         for (int j=low; j<high; j++) {
-            if (val[j] <= pivot) {
+            if (pivot.compareTo(rectNodes[j]) > 0 && play) {
                 i++;
                 swap(i,j);
-                updateScene(delay);
+                updateScene(scene,delay);
             }
         }
         swap(i+1,high);
-        updateScene(delay);
+        updateScene(scene,delay);
         return i+1;
     }
 

@@ -121,7 +121,7 @@ public class ComponentTools {
         JFXComboBox sortChoice = new JFXComboBox();
         sortChoice.setMinHeight(20);
         sortChoice.setPromptText("Select Sort");
-        sortChoice.setItems(FXCollections.observableList(Arrays.asList("Selection","Quick")));
+        sortChoice.setItems(FXCollections.observableList(Arrays.asList("Selection","Quick","DualQuick")));
         sortChoice.getSelectionModel().select(1);
         //sortChoice.getStylesheets().add("sortvisualization/icon_1.css");
         return sortChoice;

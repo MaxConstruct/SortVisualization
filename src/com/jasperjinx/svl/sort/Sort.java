@@ -8,8 +8,8 @@ import javafx.scene.layout.Pane;
 
 public interface Sort {
 
-    void start();
+    void start(Pane scene);
     void stop();
-    void reset();
+    void reset(Pane scene);
 
 }

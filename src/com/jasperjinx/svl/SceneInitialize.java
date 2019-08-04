@@ -32,8 +32,8 @@ final class SceneInitialize {
     private static final Runnable WINDOWS_ALERT_SOUND =
             (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.exclamation");
 
-    private static final double HIGH = Screen.getPrimary().getVisualBounds().getHeight()-300;
-    private static final double WIDTH = Screen.getPrimary().getVisualBounds().getWidth()-150;
+    private static final double HIGH = Screen.getPrimary().getVisualBounds().getHeight()*4/5;
+    private static final double WIDTH = Screen.getPrimary().getVisualBounds().getWidth()*9/10;
     private static final double SPACING = 0.0;
     private static final boolean SPLIT = false;
 
@@ -50,27 +50,17 @@ final class SceneInitialize {
             .setLabelID(intID);
 
     private static IntegerNode integerNode = builder.build();
-    private static HBox playScene = new HBox(integerNode.getNodeArray(size));
+    private static HBox playScene = new HBox(integerNode.getRectNode(size));
 
-    private static SortBuilder sortBuilder = new SortBuilder()
-            .setDelay(delay)
-            .setNode(integerNode.getNodeArray(size))
-            .setValue(integerNode.getNodeValue(size))
-            .setScene(playScene);
-
-    private static SortAlgorithm sortAlgorithm = sortBuilder.build();
-    private static Sort currentSort = sortAlgorithm.getDefaultSort();
+    private static SortAlgorithm sortAlgorithm = new SortAlgorithm(integerNode.getRectNode(size));
 
     static void exit() {
         sortAlgorithm.stop();
     }
 
     private static void update() {
-        playScene.getChildren().setAll(integerNode.getNodeArray(size));
-        sortAlgorithm = sortBuilder
-                .setNode(integerNode.getNodeArray(size))
-                .setValue(integerNode.getNodeValue(size))
-                .build();
+        playScene.getChildren().setAll(integerNode.getRectNode(size));
+        sortAlgorithm = new SortAlgorithm(integerNode.getRectNode(size));
     }
 
     private static void playAlertSound() {
@@ -81,18 +71,19 @@ final class SceneInitialize {
 
 
         System.out.println("Initializing");
+        System.out.println("High: " + HIGH);
+        System.out.println("Width: "+ WIDTH);
+
 
         //Create components
         var isStop = new AtomicBoolean(false);
-        var clockLabel = ComponentTools.label("100.000");
+        var clockLabel = ComponentTools.label("0.000");
         var stopwatch = new Stopwatch(clockLabel);
 
 
         //Control Button
         var moreButton = ComponentTools.SVGIconButton(SVGIcon.ADD,"More");
         var lessButton = ComponentTools.SVGIconButton(SVGIcon.SUBTRACT,"Less");
-
-
 
         var playButton = ComponentTools.SVGIconButton(SVGIcon.PLAY,"Play");
         var playBorder = new HBox(playButton);
@@ -128,8 +119,7 @@ final class SceneInitialize {
             playBorder.setDisable(true);
             shuffleButton.setDisable(true);
             new Thread(() -> {
-                sortAlgorithm.shuffleAnimation(size > 500? 3:10);
-
+                sortAlgorithm.shuffleAnimation(playScene,size > 500? 3:10);
                 resetButton.setDisable(false);
                 playBorder.setDisable(false);
                 shuffleButton.setDisable(false);
@@ -140,7 +130,11 @@ final class SceneInitialize {
 
         resetButton.setOnAction(actionEvent -> {
             clockLabel.setText("0.000");
-            currentSort.reset();
+            sortAlgorithm.reset(playScene);
+            shuffleButton.setDisable(false);
+            resetButton.setDisable(false);
+            moreButton.setDisable(false);
+            lessButton.setDisable(false);
         });
 
         sortCombo.setOnAction(actionEvent -> {
@@ -149,6 +143,7 @@ final class SceneInitialize {
         });
 
         playButton.setOnAction(actionEvent-> {
+            var currentSort = sortAlgorithm.getSortByName(SortType.valueOf(sortCombo.getValue().toString().toUpperCase()));
             if(isStop.compareAndSet(false,true)) {
                 delayBar.setStyle("-fx-background-color: rgba(32,40,48,1);" +
                         "-fx-background-radius: 25;" +
@@ -160,18 +155,17 @@ final class SceneInitialize {
                 setToStop(playButton);
 
                 //setWhilePlay(true,playButton,playBorder);
+
                 new Thread(() -> {
-                    currentSort = sortAlgorithm.getSortByName(SortType.valueOf(sortCombo.getValue().toString().toUpperCase()));
+
                     shuffleButton.setDisable(true);
                     resetButton.setDisable(true);
                     stopwatch.start();
-                    currentSort.start();
+                    currentSort.start(playScene);
                     stopwatch.stop();
 
                     playAlertSound();
                     setToPlay(playButton);
-
-                    //setWhilePlay(false,playButton,playBorder);
                     delayBar.setStyle("-fx-background-color: rgba(32,40,48,1);" +
                             "-fx-background-radius: 25;" +
                             "-fx-border-width: 2;" +
@@ -225,6 +219,7 @@ final class SceneInitialize {
         intID.setMinWidth(60);
 
         playScene.setAlignment(Pos.BOTTOM_CENTER);
+        playScene.setMaxSize(WIDTH,HIGH);
 
         delayBar.setStyle("-fx-background-color: rgba(32,40,48,1);" +
                 "-fx-background-radius: 25;" +
