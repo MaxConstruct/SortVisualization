@@ -8,24 +8,19 @@ import com.jasperjinx.svl.visualizer.SortAlgorithm;
 
 import com.jasperjinx.svl.visualizer.Stopwatch;
 import com.jfoenix.controls.JFXButton;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import java.awt.Toolkit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 
 import javafx.stage.Screen;
-import javafx.util.Duration;
+
 
 final class SceneInitialize {
 
@@ -187,11 +182,27 @@ final class SceneInitialize {
 
         moreButton.setOnAction(actionEvent -> {
             size *= 2;
+            if(size>=640)
+                moreButton.setDisable(true);
+            else
+                moreButton.setDisable(false);
+            if(size<=20)
+                lessButton.setDisable(true);
+            else
+                lessButton.setDisable(false);
             update();
         });
 
         lessButton.setOnAction(actionEvent -> {
             size /= 2;
+            if(size>=640)
+                moreButton.setDisable(true);
+            else
+                moreButton.setDisable(false);
+            if(size<=20)
+                lessButton.setDisable(true);
+            else
+                lessButton.setDisable(false);
             update();
         });
         delaySlider.setOnMouseDragged(mouseEvent -> {
@@ -221,7 +232,8 @@ final class SceneInitialize {
         playScene.setAlignment(Pos.BOTTOM_CENTER);
         playScene.setMaxSize(WIDTH,HIGH);
 
-        delayBar.setStyle("-fx-background-color: rgba(32,40,48,1);" +
+        delayBar.setStyle("" +
+                "-fx-background-color: rgba(32,40,48,1);" +
                 "-fx-background-radius: 25;" +
                 "-fx-border-width: 2;" +
                 "-fx-border-color: Black;" +
