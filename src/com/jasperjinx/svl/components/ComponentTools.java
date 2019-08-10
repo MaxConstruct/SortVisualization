@@ -2,13 +2,11 @@ package com.jasperjinx.svl.components;
 
 import com.jasperjinx.svl.sort.SortType;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSlider;
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
@@ -117,12 +115,10 @@ public class ComponentTools {
         slide.showTickMarksProperty().set(false);
         return slide;
     }
-    public static JFXComboBox createCombobox() {
-        JFXComboBox sortChoice = new JFXComboBox();
+    public static ComboBox<SortType> createComboBox(String promptText) {
+        ComboBox<SortType> sortChoice = new ComboBox<SortType>();
         sortChoice.setMinHeight(20);
-        sortChoice.setPromptText("Select Sort");
-        sortChoice.setItems(FXCollections.observableList(Arrays.asList("Selection","Quick","DualQuick")));
-        sortChoice.getSelectionModel().select(1);
+        sortChoice.setPromptText(promptText);
         //sortChoice.getStylesheets().add("sortvisualization/icon_1.css");
         return sortChoice;
     }

@@ -2,11 +2,8 @@ package com.jasperjinx.svl.sort;
 
 import com.jasperjinx.svl.visualizer.RectNode;
 import com.jasperjinx.svl.visualizer.SortAlgorithm;
-import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Dual Pivot QuickSort by Robert Sedgewick and Kevin Wayne.
@@ -33,20 +30,18 @@ public class DualPivotQuicksort extends SortAlgorithm implements Sort {
             updateScene(scene,delay);
         }
         swap( lo, --lt);
-        updateScene(scene,delay/2);
+        updateScene(scene,delay);
         swap( hi, ++gt);
-        updateScene(scene,delay/2);
+        updateScene(scene,delay);
 
 
         doSort(scene,a, lo, lt-1);
         if (less(a[lt], a[gt])) doSort(scene,a, lt+1, gt-1);
         doSort(scene,a, gt+1, hi);
 
-        assert isSorted(a, lo, hi);
+        //assert isSorted(a, lo, hi);
     }
-    private static boolean isSorted(RectNode[] a) {
-        return isSorted(a, 0, a.length - 1);
-    }
+
     private static boolean isSorted(RectNode[] a, int lo, int hi) {
         for (int i = lo + 1; i <= hi; i++)
             if (less(a[i], a[i-1])) return false;

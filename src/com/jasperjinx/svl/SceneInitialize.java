@@ -10,6 +10,7 @@ import com.jasperjinx.svl.visualizer.Stopwatch;
 import com.jfoenix.controls.JFXButton;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -17,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import java.awt.Toolkit;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.stage.Screen;
@@ -82,7 +84,7 @@ final class SceneInitialize {
 
         var playButton = ComponentTools.SVGIconButton(SVGIcon.PLAY,"Play");
         var playBorder = new HBox(playButton);
-        var sortCombo = ComponentTools.createCombobox();
+        var sortCombo = ComponentTools.createComboBox("");
 
         //var stopButton = ComponentTools.SVGIconButton(SVGIcon.STOP,"Stop");
         var resetButton = ComponentTools.SVGIconButton(SVGIcon.RESET,"Reset");
@@ -212,6 +214,9 @@ final class SceneInitialize {
         });
 
         //Set property
+
+        sortCombo.setItems(FXCollections.observableList(Arrays.asList(SortType.class.getEnumConstants())));
+        sortCombo.getSelectionModel().select(1);
 
 
         resetButton.setDisable(true);

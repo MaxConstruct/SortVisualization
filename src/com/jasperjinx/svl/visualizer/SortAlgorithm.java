@@ -24,10 +24,13 @@ public class SortAlgorithm {
 
     public Sort getSortByName(SortType type) {
         switch (type) {
-            case SELECTION: return new SelectionSort(rectNodes);
-            case QUICK:     return new QuickSort(rectNodes);
-            case DUALQUICK: return new DualPivotQuicksort(rectNodes);
-            default: throw new UnsupportedOperationException("Unsupported Sort: "+type.toString());
+            case SELECTION  : return new SelectionSort(rectNodes);
+            case QUICK      : return new QuickSort(rectNodes);
+            case DUALQUICK  : return new DualPivotQuicksort(rectNodes);
+            case MERGE_IP   : return new MergeSortInPlace(rectNodes);
+            case MERGE      : return new MergeSort(rectNodes);
+            default:
+                throw new UnsupportedOperationException("Unsupported Sort: "+type.toString());
         }
     }
 
