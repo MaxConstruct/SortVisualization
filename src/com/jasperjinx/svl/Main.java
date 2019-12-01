@@ -3,14 +3,11 @@ package com.jasperjinx.svl;
 import javafx.application.Application;
 import javafx.scene.Scene;
 
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import java.io.*;
-import java.net.MalformedURLException;
 
 public class Main extends Application {
-
-    private static final String CSS_RELATIVE_PATH = "src/com/jasperjinx/svl/resources/css/";
 
     @Override
     public void start(Stage primaryStage) {
@@ -19,31 +16,16 @@ public class Main extends Application {
 
         var root = SceneInitialize.getScene();
         root.setStyle("-fx-background-color:Black;");
-        var file = new String[] {
-                getStyleSheet("icon.css"),
-                getStyleSheet("rect.css"),
-                getStyleSheet("slider.css")
-        };
-
-        root.getStylesheets().addAll(file);
+        root.getStylesheets().add("com/jasperjinx/svl/app.css");
+        primaryStage.getIcons().add(new Image("com/jasperjinx/svl/icon.png"));
         primaryStage.setOnCloseRequest(actionEvent -> SceneInitialize.exit());
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Sort Visualization");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 
-    private String getStyleSheet(String name) {
-        try {
-            var stylesheetFile = new File(CSS_RELATIVE_PATH+name);
-            return stylesheetFile.toURI().toURL().toString();
-        } catch ( MalformedURLException e ) {
-            return null;
-        }
-    }
-
-
     public static void main(String[] args) {
-        //System.setProperty("prism.lcdtext", "false");
+        System.setProperty("prism.lcdtext", "false");
         launch(args);
     }
 }

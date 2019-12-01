@@ -1,0 +1,84 @@
+.root{
+    -fx-font-size: 14;
+    -fx-font-family: "Segoe UI Semibold";
+}
+
+
+.jfx-combo-box > .list-cell {
+    -fx-text-fill: #48C8A0;
+}
+
+.jfx-combo-box:focused > .list-cell {
+    -fx-text-fill: #F05F57;
+}
+
+.icon-button .button-icon {
+    -fx-fill: White;/*linear-gradient(#FFF720,#3CD500);*/
+}
+
+/* set default fill of svg path
+.icon-button:focused {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+*/
+/* remove default button style & set size */
+.icon-button {
+    -fx-background-color: transparent, transparent, transparent, transparent, transparent;
+    -fx-padding: 5;
+    /*
+    -fx-pref-height: 30;
+    -fx-pref-width: 30;
+    -fx-min-height: 30;
+    -fx-min-width: 30;
+    -fx-max-height: 30;
+    -fx-max-width: 30;
+    */
+}
+
+/* modify svg path fill for hovered/pressed button */
+.icon-button:pressed .button-icon,
+.icon-button:hover .button-icon {
+    -fx-fill: #db3236;	/*linear-gradient(#BF24FE 0%, #1E6AFE 100%);*/
+}
+
+
+.rectangle {
+    -fx-fill:           linear-gradient(rgba(72,200,160,1) 0, rgba(32,40,48,1) 100 );
+    -fx-stroke:         linear-gradient(rgba(72,200,160,1) 0, rgba(32,40,48,1) 100 );
+    -fx-stroke-width:   1;
+    -fx-stroke-type:    inside;
+}
+
+.rectangle:hover {
+    -fx-fill:           #F05F57 ;
+    -fx-stroke:         #F05F57;
+    -fx-stroke-width:   1;
+    -fx-stroke-type:    inside;
+}
+
+/* Styling the slider track
+.jfx-slider > .track {
+     -fx-background-color: yellow;
+}
+*/
+/* Styling the slider thumb */
+.jfx-slider > .thumb {
+    -fx-background-color: rgba(72,200,160,1);
+}
+
+/* Styling the filled track */
+.jfx-slider > .colored-track {
+    -fx-background-color:  rgba(72,200,160,1);
+}
+
+/* Styling the animated thumb */
+.jfx-slider > .animated-thumb {
+    -fx-background-color: white;/*linear-gradient(to left,#FF6FD8,#3813C2);*/
+}
+
+/* Styling the slider value text inside animated thumb */
+.jfx-slider .slider-value {
+    -fx-fill: black;
+    -fx-stroke: black;
+}

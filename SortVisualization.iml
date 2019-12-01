@@ -7,9 +7,16 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="library" name="javafx11" level="project" />
-    <orderEntry type="library" name="jfoenix-9.0.9" level="project" />
-    <orderEntry type="library" name="jfoenix-9.0.8" level="project" />
-    <orderEntry type="library" name="javafx-11.0.2" level="project" />
+    <orderEntry type="library" exported="" name="jfoenix-9.0.8" level="project" />
+    <orderEntry type="library" exported="" name="javafx-11.0.2" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/src/com/jasperjinx/svl/resources" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

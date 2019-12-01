@@ -2,6 +2,7 @@ package com.jasperjinx.svl.components;
 
 import com.jasperjinx.svl.sort.SortType;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSlider;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
@@ -115,12 +116,14 @@ public class ComponentTools {
         slide.showTickMarksProperty().set(false);
         return slide;
     }
-    public static ComboBox<SortType> createComboBox(String promptText) {
-        ComboBox<SortType> sortChoice = new ComboBox<SortType>();
-        sortChoice.setMinHeight(20);
-        sortChoice.setPromptText(promptText);
+    public static JFXComboBox<SortType> createComboBox(String promptText) {
+        JFXComboBox<SortType> comboBox = new JFXComboBox<>();
+        comboBox.setMinHeight(20);
+        comboBox.setPromptText(promptText);
+        comboBox.setUnFocusColor(Color.web("#48C8A0"));
+        comboBox.setFocusColor(Color.web("#F05F57"));
         //sortChoice.getStylesheets().add("sortvisualization/icon_1.css");
-        return sortChoice;
+        return comboBox;
     }
 
 }

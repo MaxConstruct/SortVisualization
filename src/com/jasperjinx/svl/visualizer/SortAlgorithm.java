@@ -26,9 +26,8 @@ public class SortAlgorithm {
         switch (type) {
             case SELECTION  : return new SelectionSort(rectNodes);
             case QUICK      : return new QuickSort(rectNodes);
-            case DUALQUICK  : return new DualPivotQuicksort(rectNodes);
+            case DUAL_QUICK : return new DualPivotQuickSort(rectNodes);
             case MERGE_IP   : return new MergeSortInPlace(rectNodes);
-            case MERGE      : return new MergeSort(rectNodes);
             default:
                 throw new UnsupportedOperationException("Unsupported Sort: "+type.toString());
         }
@@ -86,6 +85,9 @@ public class SortAlgorithm {
         catch(InterruptedException ex) {
             ex.printStackTrace();
         }
+    }
+    protected void updateScene(Pane scene) {
+        updateScene(scene,delay);
     }
 
 

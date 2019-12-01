@@ -11,6 +11,7 @@ import com.jfoenix.controls.JFXButton;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -18,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -53,6 +55,7 @@ final class SceneInitialize {
 
     static void exit() {
         sortAlgorithm.stop();
+        System.exit(0);
     }
 
     private static void update() {
@@ -85,6 +88,7 @@ final class SceneInitialize {
         var playButton = ComponentTools.SVGIconButton(SVGIcon.PLAY,"Play");
         var playBorder = new HBox(playButton);
         var sortCombo = ComponentTools.createComboBox("");
+
 
         //var stopButton = ComponentTools.SVGIconButton(SVGIcon.STOP,"Stop");
         var resetButton = ComponentTools.SVGIconButton(SVGIcon.RESET,"Reset");
@@ -134,13 +138,9 @@ final class SceneInitialize {
             lessButton.setDisable(false);
         });
 
-        sortCombo.setOnAction(actionEvent -> {
-            //var value = SortType.valueOf(sortCombo.getValue().toString().toUpperCase());
-            //currentSort = sortAlgorithm.getSortByName(SortType.valueOf(sortCombo.getValue().toString().toUpperCase()));
-        });
 
         playButton.setOnAction(actionEvent-> {
-            var currentSort = sortAlgorithm.getSortByName(SortType.valueOf(sortCombo.getValue().toString().toUpperCase()));
+            var currentSort = sortAlgorithm.getSortByName(sortCombo.getValue());
             if(isStop.compareAndSet(false,true)) {
                 delayBar.setStyle("-fx-background-color: rgba(32,40,48,1);" +
                         "-fx-background-radius: 25;" +
@@ -276,9 +276,16 @@ final class SceneInitialize {
         });
     }
 
+    private static <T> ObservableList<String> toStringArrayList(ObservableList<T> list) {
+        ObservableList<String> t = FXCollections.observableArrayList();
+        list.forEach(x->{
+            String s = x.toString();
+            t.add(
+                    s.substring(0,1).toUpperCase() + s.substring(1).toLowerCase()
+            );
+        });
 
-
-
-
+        return t;
+    }
 
 }

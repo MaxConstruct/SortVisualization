@@ -25,17 +25,16 @@ public class QuickSort extends SortAlgorithm implements Sort {
 
     private <P extends Pane> int partition(P scene,int low, int high) {
         RectNode pivot = rectNodes[high];
-        int i = (low-1);
+        int i = low-1;
         for (int j=low; j<high; j++) {
             if (pivot.compareTo(rectNodes[j]) > 0 && play) {
-                i++;
-                swap(i,j);
+                swap(++i,j);
                 updateScene(scene,delay);
             }
         }
-        swap(i+1,high);
+        swap(++i,high);
         updateScene(scene,delay);
-        return i+1;
+        return i;
     }
 
 }

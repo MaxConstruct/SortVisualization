@@ -15,25 +15,8 @@ class SVGLoader {
 
     private static final String RESOURCE_PATH = "src/com/jasperjinx/svl/resources/icon/";
 
-    /**
-     *
-     * @param file Receive .svg File
-     * @return SVGPath content as String
-     */
-    public static String load(File file) {
-        try {
-            var document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
-            var xpathExpression = "//path/@d";
-            var expression = XPathFactory.newInstance().newXPath().compile(xpathExpression);
-            var svgPath = (NodeList) expression.evaluate(document, XPathConstants.NODESET);
-            if(svgPath.getLength() == 1)
-                return svgPath.item(0).getNodeValue();
-            return svgPath.item(1).getNodeValue();
-        } catch (Exception ex) {
-            System.out.println("Unsupported File: "+file.getName());
-            return null;
-        }
-    }
+
+
 
     /**
      *
@@ -42,12 +25,12 @@ class SVGLoader {
      */
     public static SVGPath getPathByName(SVGIcon name) {
         return new SVGPath() {{
-            setContent(load(new File(getReourcePath(name))));
+            setContent(name.getPath());
         }};
     }
 
-    private static String getReourcePath(SVGIcon name) {
-        return RESOURCE_PATH + name.toString().toLowerCase() + ".svg";
-    }
+
+
+
 
 }

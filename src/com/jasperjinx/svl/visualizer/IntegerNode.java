@@ -44,8 +44,9 @@ public class IntegerNode {
     private void initScene() {
 
         long s = System.nanoTime();
-        for(int initSize:INITIAL_SIZE)
+        for(int initSize:INITIAL_SIZE) {
             createScene(initSize);
+        }
 
         long e = System.nanoTime();
         double t = e-s;

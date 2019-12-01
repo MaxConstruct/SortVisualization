@@ -9,9 +9,9 @@ import javafx.scene.layout.Pane;
  * Dual Pivot QuickSort by Robert Sedgewick and Kevin Wayne.
  *
  */
-public class DualPivotQuicksort extends SortAlgorithm implements Sort {
+public class DualPivotQuickSort extends SortAlgorithm implements Sort {
 
-    public DualPivotQuicksort(RectNode[] rectNodes) {
+    public DualPivotQuickSort(RectNode[] rectNodes) {
         super(rectNodes);
     }
     @Override
@@ -26,12 +26,12 @@ public class DualPivotQuicksort extends SortAlgorithm implements Sort {
         while (i <= gt) {
             if       (less(a[i], a[lo])) swap(lt++, i++);
             else if  (less(a[hi], a[i])) swap(i, gt--);
-            else                         i++;
+            else     i++;
             updateScene(scene,delay);
         }
-        swap( lo, --lt);
+        swap(lo, --lt);
         updateScene(scene,delay);
-        swap( hi, ++gt);
+        swap(hi, ++gt);
         updateScene(scene,delay);
 
 

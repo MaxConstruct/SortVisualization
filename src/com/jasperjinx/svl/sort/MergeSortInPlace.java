@@ -17,13 +17,10 @@ public class MergeSortInPlace extends SortAlgorithm implements Sort {
 
     private void doSort(Pane scene, int left, int right) {
         if(left < right && play) {
-            //if(right-left < 47) insertion(scene,right,left);
-            //else {
-                int mid = left + (right - left) / 2;
-                doSort(scene, left, mid);
-                doSort(scene, mid + 1, right);
-                merge(scene, left, mid, right);
-            //}
+            int mid = left + (right - left) / 2;
+            doSort(scene, left, mid);
+            doSort(scene, mid + 1, right);
+            merge(scene, left, mid, right);
         }
     }
 
