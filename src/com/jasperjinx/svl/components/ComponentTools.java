@@ -95,8 +95,12 @@ public class ComponentTools {
     }
 
     public static Label label(String text) {
+        return label(text,15);
+    }
+
+    public static Label label(String text, int size) {
         var t = new Label(text);
-        t.setStyle("-fx-font-size:15;");
+        t.setStyle("-fx-font-size:"+size+";");
         t.setAlignment(Pos.CENTER_LEFT);
         t.setTextFill(Color.WHITE);
         return t;
@@ -122,7 +126,6 @@ public class ComponentTools {
         comboBox.setPromptText(promptText);
         comboBox.setUnFocusColor(Color.web("#48C8A0"));
         comboBox.setFocusColor(Color.web("#F05F57"));
-        //sortChoice.getStylesheets().add("sortvisualization/icon_1.css");
         return comboBox;
     }
 

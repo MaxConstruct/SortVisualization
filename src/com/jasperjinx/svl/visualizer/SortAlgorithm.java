@@ -4,7 +4,9 @@ import com.jasperjinx.svl.sort.*;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 public class SortAlgorithm {
@@ -16,6 +18,7 @@ public class SortAlgorithm {
 
     public SortAlgorithm(RectNode[] rectNodes) {
         this.rectNodes = rectNodes;
+
     }
 
     public void setDelay(long delay) {
@@ -57,11 +60,20 @@ public class SortAlgorithm {
         updateScene(scene,0);
     }
 
+    /*
     public void shuffleAnimation(Pane scene,long delay) {
         var n = rectNodes.length;
         var r = new Random();
         for(int i = 0;i<n;i++) {
             swap(i , i + r.nextInt(n-i));
+            updateScene(scene,delay);
+        }
+    }
+     */
+    public void shuffleAnimation(Pane scene,long delay,ArrayList<Integer> indexes) {
+        var n = rectNodes.length;
+        for(int i = 0;i<n;i++) {
+            swap(i , indexes.get(i));
             updateScene(scene,delay);
         }
     }
@@ -71,6 +83,13 @@ public class SortAlgorithm {
         rectNodes[i] = rectNodes[j];
         rectNodes[j] = o;
     }
+
+    private void clear() {
+        for(int i = 0;i<rectNodes.length;i++) {
+            rectNodes[i].setSelected(false);
+        }
+    }
+
 
     protected void updateScene(Pane scene, long delay) {
         Platform.runLater(()->  {
