@@ -10,6 +10,8 @@ import com.jasperjinx.svl.visualizer.SortAlgorithm;
 import com.jasperjinx.svl.visualizer.Stopwatch;
 import com.jfoenix.controls.JFXButton;
 
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -68,9 +70,43 @@ final class SceneInitialize {
     private SortAlgorithm sortAlgorithm1;
     private SortAlgorithm sortAlgorithm2;
 
+
+    private AtomicBoolean[] isStop = new AtomicBoolean[]{new AtomicBoolean(false),new AtomicBoolean(false)};
+
+    private Label clockLabel1 = ComponentTools.label("0.000");
+    private Label clockLabel2 = ComponentTools.label("0.000");
+    private Stopwatch stopwatch1 = new Stopwatch(clockLabel1);
+    private Stopwatch stopwatch2 = new Stopwatch(clockLabel2);
+
+    //Control Button
+    private JFXButton playButton;
+    private HBox playBorder;
+    private JFXComboBox<SortType> sortCombo1;
+    private JFXComboBox<SortType> sortCombo2;
+
+    private JFXToggleButton splitToggle;
+
+
+    //var stopButton = ComponentTools.SVGIconButton(SVGIcon.STOP,"Stop");
+    private JFXButton resetButton;
+    private JFXButton shuffleButton;
+
+    //Delay Setting
+    private Label delayText;
+    private JFXSlider delaySlider;
+    private Label delayShowTime;
+    private Label delayMSText;
+
+    //Create pane
+    private HBox delayBar;
+    private HBox controlBar;
+
+    private Label sortLabel1;
+    private Label sortLabel2;
+
+    private VBox scene;
+
     private static void shuffleIndexArray() {
-        System.out.println("Index Size: " + indexes.size());
-        System.out.println("Rect Size: " + size);
         if(indexes.size() != size) {
             indexes.clear();
             for (int i = 0; i < size; i++)
@@ -81,6 +117,15 @@ final class SceneInitialize {
 
     public SceneInitialize() {
 
+        currentOption = Main.ExitOption.SHUTDOWN;
+
+        initScene();
+        initComponent();
+        initPref();
+        initActionEvent();
+    }
+
+    private void initScene() {
         shuffleIndexArray();
         intID = ComponentTools.label("Int: -");
 
@@ -105,22 +150,125 @@ final class SceneInitialize {
         playScene2  = new HBox();
 
         update();
+    }
+
+    private void initComponent() {
+
+        isStop = new AtomicBoolean[]{new AtomicBoolean(false),new AtomicBoolean(false)};
+        clockLabel1 = ComponentTools.label("0.000");
+        clockLabel2 = ComponentTools.label("0.000");
+        stopwatch1 = new Stopwatch(clockLabel1);
+        stopwatch2 = new Stopwatch(clockLabel2);
+
+        //Control Button
+        playButton = ComponentTools.SVGIconButton(SVGIcon.PLAY,"Play");
+        playBorder = new HBox(playButton);
+        sortCombo1 = ComponentTools.createComboBox("");
+        sortCombo2 = ComponentTools.createComboBox("");
+
+        splitToggle = new JFXToggleButton();
+        splitToggle.setText("Comparison Mode");
+
+
+        //var stopButton = ComponentTools.SVGIconButton(SVGIcon.STOP,"Stop");
+        resetButton = ComponentTools.SVGIconButton(SVGIcon.RESET,"Reset");
+        shuffleButton = ComponentTools.SVGIconButton(SVGIcon.SHUFFLE,"Shuffle");
+
+        //Delay Setting
+        delayText = ComponentTools.label("Delay:");
+        delaySlider = ComponentTools.slider();
+        delayShowTime = ComponentTools.label(delay+"");
+        delayMSText = ComponentTools.label("ms");
+
+        //Create pane
+        delayBar = new HBox(delayText,delaySlider,delayShowTime,delayMSText,clockLabel1,clockLabel2);
+        controlBar = split ? new HBox(
+                playBorder,shuffleButton,resetButton,sortCombo1,sortCombo2,splitToggle,
+                delayBar,
+                moreButton,lessButton,intID
+        ):
+                new HBox(
+                        playBorder,shuffleButton,resetButton,sortCombo1,splitToggle,
+                        delayBar,
+                        moreButton,lessButton,intID
+                );
+
+        sortLabel1 = ComponentTools.label("",18);
+        sortLabel2 = ComponentTools.label("",18);
+
+        scene = split? new VBox(controlBar,sortLabel1,playScene1,sortLabel2,playScene2):new VBox(controlBar,sortLabel1,playScene1);
 
 
 
     }
+
+    private void initPref() {
+
+        resetButton.setDisable(true);
+        playBorder.setDisable(true);
+        playButton.setMinWidth(80);
+        playButton.setMaxWidth(80);
+
+        clockLabel1.setMaxWidth(60);
+        clockLabel1.setMinWidth(60);
+        clockLabel1.setAlignment(Pos.CENTER);
+        clockLabel1.setStyle("-fx-font-size: 16; -fx-text-fill: rgba(72,200,160,1); -fx-font-family: Consolas; -fx-font-weight: bold;");
+
+        if(split) {
+            clockLabel2.setMaxWidth(60);
+            clockLabel2.setMinWidth(60);
+            clockLabel2.setAlignment(Pos.CENTER);
+            clockLabel2.setStyle("-fx-font-size: 16; -fx-text-fill: rgba(72,200,160,1); -fx-font-family: Consolas; -fx-font-weight: bold;");
+        }
+
+        delaySlider.setValue(delay);
+        delayShowTime.setMinWidth(30);
+        delayShowTime.setAlignment(Pos.CENTER);
+        intID.setMinWidth(60);
+
+        playScene1.setAlignment(Pos.BOTTOM_CENTER);
+        playScene1.setMaxSize(WIDTH,HIGH);
+
+        if(split) {
+            playScene2.setAlignment(Pos.BOTTOM_CENTER);
+            playScene2.setMaxSize(WIDTH, HIGH);
+        }
+        delayBar.setStyle("" +
+                "-fx-background-color: rgba(32,40,48,1);" +
+                "-fx-background-radius: 25;" +
+                "-fx-border-width: 2;" +
+                "-fx-border-color: Black;" +
+                "-fx-border-radius: 25;"
+        );
+
+        delayBar.setAlignment(Pos.CENTER);
+        delayBar.setSpacing(5);
+        delayBar.setPadding(new Insets(2,10,2,10));
+        playBorder.setPadding(new Insets(2,2,2,2));
+        playBorder.setStyle(
+                "-fx-background-color:rgba(0,0,0,0);" +
+                        "-fx-background-radius: 25;");
+        //setWhilePlay(false,playButton,playBorder);
+        playBorder.setAlignment(Pos.CENTER);
+
+        splitToggle.setTextFill(Color.WHITE);
+
+        controlBar.setSpacing(10);
+        controlBar.setAlignment(Pos.CENTER);
+        scene.setAlignment(Pos.CENTER);
+        scene.setSpacing(0);
+        scene.setPadding(new Insets(10,0,0,0));
+    }
+
+    public VBox getScene() {
+        return scene;
+    }
+
     public Main.ExitOption exit() {
         sortAlgorithm1.stop();
         if(split)
             sortAlgorithm2.stop();
         return Main.ExitOption.SHUTDOWN;
-    }
-
-    public Main.ExitOption exit(Main.ExitOption option) {
-        sortAlgorithm1.stop();
-        if(split)
-            sortAlgorithm2.stop();
-        return option;
     }
 
     private void update() {
@@ -142,60 +290,7 @@ final class SceneInitialize {
         WINDOWS_ALERT_SOUND.run();
     }
 
-    public Parent getScene() {
-
-        System.out.println("Initializing");
-        System.out.println("High: " + HIGH);
-        System.out.println("Width: "+ WIDTH);
-
-        currentOption = Main.ExitOption.SHUTDOWN;
-
-        //Create components
-        var isStop = new AtomicBoolean[]{new AtomicBoolean(false),new AtomicBoolean(false)};
-        var clockLabel1 = ComponentTools.label("0.000");
-        var clockLabel2 = ComponentTools.label("0.000");
-        var stopwatch1 = new Stopwatch(clockLabel1);
-        var stopwatch2 = new Stopwatch(clockLabel2);
-
-        //Control Button
-        var playButton = ComponentTools.SVGIconButton(SVGIcon.PLAY,"Play");
-        var playBorder = new HBox(playButton);
-        var sortCombo1 = ComponentTools.createComboBox("");
-        var sortCombo2 = ComponentTools.createComboBox("");
-
-        var splitToggle = new JFXToggleButton();
-        splitToggle.setText("Comparison Mode");
-
-
-        //var stopButton = ComponentTools.SVGIconButton(SVGIcon.STOP,"Stop");
-        var resetButton = ComponentTools.SVGIconButton(SVGIcon.RESET,"Reset");
-        var shuffleButton = ComponentTools.SVGIconButton(SVGIcon.SHUFFLE,"Shuffle");
-
-        //Delay Setting
-        var delayText = ComponentTools.label("Delay:");
-        var delaySlider = ComponentTools.slider();
-        var delayShowTime = ComponentTools.label(delay+"");
-        var delayMSText = ComponentTools.label("ms");
-
-        //Create pane
-        var delayBar = new HBox(delayText,delaySlider,delayShowTime,delayMSText,clockLabel1,clockLabel2);
-        var controlBar = split ? new HBox(
-                playBorder,shuffleButton,resetButton,sortCombo1,sortCombo2,splitToggle,
-                delayBar,
-                moreButton,lessButton,intID
-        ):
-                new HBox(
-                playBorder,shuffleButton,resetButton,sortCombo1,splitToggle,
-                delayBar,
-                moreButton,lessButton,intID
-        );
-        System.out.println(playScene1.getChildren().size());
-        System.out.println(playScene2.getChildren().size());
-
-        var sortLabel1 = ComponentTools.label("",18);
-        var sortLabel2 = ComponentTools.label("",18);
-
-        var scene = split? new VBox(controlBar,sortLabel1,playScene1,sortLabel2,playScene2):new VBox(controlBar,sortLabel1,playScene1);
+    private void initActionEvent() {
 
         //Set component actions
         shuffleButton.setOnAction(actionEvent-> {
@@ -255,8 +350,6 @@ final class SceneInitialize {
                 );
 
                 setToStop(playButton);
-
-                //setWhilePlay(true,playButton,playBorder);
 
                 new Thread(() -> {
 
@@ -380,59 +473,8 @@ final class SceneInitialize {
         if(split)
             sortLabel2.setPadding(new Insets(20,0,0,0));
 
-        resetButton.setDisable(true);
-        playBorder.setDisable(true);
-        playButton.setMinWidth(80);
-        playButton.setMaxWidth(80);
-
-        clockLabel1.setMaxWidth(60);
-        clockLabel1.setMinWidth(60);
-        clockLabel1.setAlignment(Pos.CENTER);
-        clockLabel1.setStyle("-fx-font-size: 16; -fx-text-fill: rgba(72,200,160,1); -fx-font-family: Consolas; -fx-font-weight: bold;");
-        if(split) {
-            clockLabel2.setMaxWidth(60);
-            clockLabel2.setMinWidth(60);
-            clockLabel2.setAlignment(Pos.CENTER);
-            clockLabel2.setStyle("-fx-font-size: 16; -fx-text-fill: rgba(72,200,160,1); -fx-font-family: Consolas; -fx-font-weight: bold;");
-        }
-        delaySlider.setValue(delay);
-        delayShowTime.setMinWidth(30);
-        delayShowTime.setAlignment(Pos.CENTER);
-        intID.setMinWidth(60);
-
-        playScene1.setAlignment(Pos.BOTTOM_CENTER);
-        playScene1.setMaxSize(WIDTH,HIGH);
-
-        if(split) {
-            playScene2.setAlignment(Pos.BOTTOM_CENTER);
-            playScene2.setMaxSize(WIDTH, HIGH);
-        }
-        delayBar.setStyle("" +
-                "-fx-background-color: rgba(32,40,48,1);" +
-                "-fx-background-radius: 25;" +
-                "-fx-border-width: 2;" +
-                "-fx-border-color: Black;" +
-                "-fx-border-radius: 25;"
-        );
-
-        delayBar.setAlignment(Pos.CENTER);
-        delayBar.setSpacing(5);
-        delayBar.setPadding(new Insets(2,10,2,10));
-        playBorder.setPadding(new Insets(2,2,2,2));
-        playBorder.setStyle(
-                "-fx-background-color:rgba(0,0,0,0);" +
-                "-fx-background-radius: 25;");
-        //setWhilePlay(false,playButton,playBorder);
-        playBorder.setAlignment(Pos.CENTER);
-
-        controlBar.setSpacing(10);
-        controlBar.setAlignment(Pos.CENTER);
-        scene.setAlignment(Pos.CENTER);
-        scene.setSpacing(0);
-        scene.setPadding(new Insets(10,0,0,0));
-
-        return scene;
     }
+
     private void setToPlay(JFXButton button) {
         Platform.runLater(() -> {
             button.setText(" Play");
