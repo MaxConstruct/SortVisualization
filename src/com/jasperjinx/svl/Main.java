@@ -13,32 +13,35 @@ public class Main extends Application {
         RESTART, SHUTDOWN
     }
 
-    private static int i=0;
-
     private static ExitOption currentOption = ExitOption.SHUTDOWN;
 
     @Override
     public void start(Stage primaryStage) {
-        startApp();
+        do {
+            startApp();
+        } while (SceneInitialize.currentOption.equals(ExitOption.RESTART));
     }
 
     private void startApp() {
+
         Stage primaryStage = new Stage();
         System.out.println("Starting...");
-        var root = SceneInitialize.getScene();
+        var initScene = new SceneInitialize();
+        var root = initScene.getScene();
         root.setStyle("-fx-background-color:Black;");
         root.getStylesheets().add("com/jasperjinx/svl/app.css");
         primaryStage.getIcons().add(new Image("com/jasperjinx/svl/icon.png"));
 
         primaryStage.setOnCloseRequest(actionEvent -> {
-            currentOption = SceneInitialize.exit();
+            currentOption = initScene.exit();
             if(currentOption.equals(ExitOption.RESTART))
                 startApp();
         });
         primaryStage.setTitle("Sort Visualization");
         primaryStage.setScene(new Scene(root));
-        primaryStage.show();
-        System.out.println("Shutdown");
+        primaryStage.showAndWait();
+        System.out.println("ShutDown....");
+
     }
 
     public static void main(String[] args) {

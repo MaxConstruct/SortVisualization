@@ -10,12 +10,14 @@ import com.jasperjinx.svl.visualizer.SortAlgorithm;
 import com.jasperjinx.svl.visualizer.Stopwatch;
 import com.jfoenix.controls.JFXButton;
 
+import com.jfoenix.controls.JFXToggleButton;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -27,6 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 
 
 final class SceneInitialize {
@@ -43,25 +46,27 @@ final class SceneInitialize {
     private static final int UPPER_BOUND = 1280;
     private static final int LOWER_BOUND = 20;
 
-    private static boolean split = true;
+    public static Main.ExitOption currentOption = Main.ExitOption.SHUTDOWN;
+
+    private static boolean split = false;
     private static int size = 160;
     private static long delay = 50;
 
     private static Label intID;
-
-    private static IntegerNode integerNode1;
-    private static IntegerNode integerNode2;
-
-    private static HBox playScene1;
-    private static HBox playScene2;
-
-    private static JFXButton moreButton = ComponentTools.SVGIconButton(SVGIcon.ADD,"More");
-    private static JFXButton lessButton = ComponentTools.SVGIconButton(SVGIcon.SUBTRACT,"Less");
-
-    private static SortAlgorithm sortAlgorithm1;
-    private static SortAlgorithm sortAlgorithm2;
-
     private static ArrayList<Integer> indexes = new ArrayList<>();
+
+
+    private  IntegerNode integerNode1;
+    private  IntegerNode integerNode2;
+
+    private  HBox playScene1;
+    private  HBox playScene2;
+
+    private  JFXButton moreButton = ComponentTools.SVGIconButton(SVGIcon.ADD,"More");
+    private  JFXButton lessButton = ComponentTools.SVGIconButton(SVGIcon.SUBTRACT,"Less");
+
+    private SortAlgorithm sortAlgorithm1;
+    private SortAlgorithm sortAlgorithm2;
 
     private static void shuffleIndexArray() {
         System.out.println("Index Size: " + indexes.size());
@@ -74,13 +79,10 @@ final class SceneInitialize {
         Collections.shuffle(indexes);
     }
 
-    static {
+    public SceneInitialize() {
 
         shuffleIndexArray();
-
         intID = ComponentTools.label("Int: -");
-
-
 
         integerNode1 = new IntegerNode.Builder()
                 .setHigh(split ? HIGH / 2 : HIGH)
@@ -107,33 +109,46 @@ final class SceneInitialize {
 
 
     }
-    static Main.ExitOption exit() {
+    public Main.ExitOption exit() {
         sortAlgorithm1.stop();
-        sortAlgorithm2.stop();
+        if(split)
+            sortAlgorithm2.stop();
         return Main.ExitOption.SHUTDOWN;
     }
 
-    private static void update() {
+    public Main.ExitOption exit(Main.ExitOption option) {
+        sortAlgorithm1.stop();
+        if(split)
+            sortAlgorithm2.stop();
+        return option;
+    }
+
+    private void update() {
 
         shuffleIndexArray();
 
         RectNode[] rectNodes1 = integerNode1.getRectNode(size);
-        RectNode[] rectNodes2 = integerNode2.getRectNode(size);
         playScene1.getChildren().setAll(rectNodes1);
-        playScene2.getChildren().setAll(rectNodes2);
         sortAlgorithm1 = new SortAlgorithm(rectNodes1);
-        sortAlgorithm2 = new SortAlgorithm(rectNodes2);
+
+        if(split) {
+            RectNode[] rectNodes2 = integerNode2.getRectNode(size);
+            playScene2.getChildren().setAll(rectNodes2);
+            sortAlgorithm2 = new SortAlgorithm(rectNodes2);
+        }
     }
 
-    private static void playAlertSound() {
+    private void playAlertSound() {
         WINDOWS_ALERT_SOUND.run();
     }
 
-    static Parent getScene() {
+    public Parent getScene() {
 
         System.out.println("Initializing");
         System.out.println("High: " + HIGH);
         System.out.println("Width: "+ WIDTH);
+
+        currentOption = Main.ExitOption.SHUTDOWN;
 
         //Create components
         var isStop = new AtomicBoolean[]{new AtomicBoolean(false),new AtomicBoolean(false)};
@@ -143,11 +158,13 @@ final class SceneInitialize {
         var stopwatch2 = new Stopwatch(clockLabel2);
 
         //Control Button
-
         var playButton = ComponentTools.SVGIconButton(SVGIcon.PLAY,"Play");
         var playBorder = new HBox(playButton);
         var sortCombo1 = ComponentTools.createComboBox("");
         var sortCombo2 = ComponentTools.createComboBox("");
+
+        var splitToggle = new JFXToggleButton();
+        splitToggle.setText("Comparison Mode");
 
 
         //var stopButton = ComponentTools.SVGIconButton(SVGIcon.STOP,"Stop");
@@ -162,8 +179,13 @@ final class SceneInitialize {
 
         //Create pane
         var delayBar = new HBox(delayText,delaySlider,delayShowTime,delayMSText,clockLabel1,clockLabel2);
-        var controlBar = new HBox(
-                playBorder,shuffleButton,resetButton,sortCombo1,sortCombo2,
+        var controlBar = split ? new HBox(
+                playBorder,shuffleButton,resetButton,sortCombo1,sortCombo2,splitToggle,
+                delayBar,
+                moreButton,lessButton,intID
+        ):
+                new HBox(
+                playBorder,shuffleButton,resetButton,sortCombo1,splitToggle,
                 delayBar,
                 moreButton,lessButton,intID
         );
@@ -173,7 +195,7 @@ final class SceneInitialize {
         var sortLabel1 = ComponentTools.label("",18);
         var sortLabel2 = ComponentTools.label("",18);
 
-        var scene = split? new VBox(controlBar,sortLabel1,playScene1,sortLabel2,playScene2):new VBox(controlBar,playScene1);
+        var scene = split? new VBox(controlBar,sortLabel1,playScene1,sortLabel2,playScene2):new VBox(controlBar,sortLabel1,playScene1);
 
         //Set component actions
         shuffleButton.setOnAction(actionEvent-> {
@@ -195,19 +217,25 @@ final class SceneInitialize {
 
         resetButton.setOnAction(actionEvent -> {
             clockLabel1.setText("0.000");
-            clockLabel2.setText("0.000");
+
             sortAlgorithm1.reset(playScene1);
-            sortAlgorithm2.reset(playScene2);
+
             shuffleButton.setDisable(false);
             resetButton.setDisable(false);
             moreButton.setDisable(false);
             lessButton.setDisable(false);
+
+            if(split) {
+                sortAlgorithm2.reset(playScene2);
+                clockLabel2.setText("0.000");
+            }
         });
 
         sortCombo1.setOnAction(actionEvent ->{
             sortLabel1.setText(sortCombo1.getSelectionModel().getSelectedItem().getName());
         });
 
+        if(split)
         sortCombo2.setOnAction(actionEvent ->{
             sortLabel2.setText(sortCombo2.getSelectionModel().getSelectedItem().getName());
         });
@@ -215,7 +243,9 @@ final class SceneInitialize {
 
         playButton.setOnAction(actionEvent-> {
             var currentSort1 = sortAlgorithm1.getSortByName(sortCombo1.getValue());
-            var currentSort2 = sortAlgorithm2.getSortByName(sortCombo2.getValue());
+            Sort currentSort2 = null;
+            if(split)
+                 currentSort2 = sortAlgorithm2.getSortByName(sortCombo2.getValue());
             if(isStop[0].compareAndSet(false,true) && isStop[1].compareAndSet(false,true)) {
                 delayBar.setStyle("-fx-background-color: rgba(32,40,48,1);" +
                         "-fx-background-radius: 25;" +
@@ -264,11 +294,12 @@ final class SceneInitialize {
 
                 }).start();
 
-                if(split)
+                if(split) {
+                    Sort finalCurrentSort = currentSort2;
                     new Thread(() -> {
 
                         stopwatch2.start();
-                        currentSort2.start(playScene2);
+                        finalCurrentSort.start(playScene2);
                         stopwatch2.stop();
 
                         playAlertSound();
@@ -296,12 +327,13 @@ final class SceneInitialize {
                         }
 
                     }).start();
-
+                }
 
             } else {
                 setToPlay(playButton);
                 currentSort1.stop();
-                currentSort2.stop();
+                if(split)
+                    currentSort2.stop();
             }
         });
 
@@ -319,21 +351,34 @@ final class SceneInitialize {
         delaySlider.setOnMouseDragged(mouseEvent -> {
             delay = (long) Math.ceil(delaySlider.getValue());
             sortAlgorithm1.setDelay(delay);
-            sortAlgorithm2.setDelay(delay);
+            if(split)
+                sortAlgorithm2.setDelay(delay);
             delayShowTime.setText(delay+"");
+        });
+
+        splitToggle.setSelected(split);
+
+        splitToggle.setOnAction(actionEvent-> {
+            split = splitToggle.isSelected();
+            currentOption = Main.ExitOption.RESTART;
+            ((Stage) splitToggle.getScene().getWindow()).close();
         });
 
         //Set property
         sortCombo1.setItems(FXCollections.observableList(Arrays.asList(SortType.class.getEnumConstants())));
         sortCombo1.getSelectionModel().select(1);
-        sortCombo2.setItems(FXCollections.observableList(Arrays.asList(SortType.class.getEnumConstants())));
-        sortCombo2.getSelectionModel().select(1);
+        if(split) {
+            sortCombo2.setItems(FXCollections.observableList(Arrays.asList(SortType.class.getEnumConstants())));
+            sortCombo2.getSelectionModel().select(1);
+        }
 
         sortLabel1.setText(sortCombo1.getSelectionModel().getSelectedItem().getName());
-        sortLabel2.setText(sortCombo2.getSelectionModel().getSelectedItem().getName());
+        if(split)
+            sortLabel2.setText(sortCombo2.getSelectionModel().getSelectedItem().getName());
 
         sortLabel1.setPadding(new Insets(20,0,0,0));
-        sortLabel2.setPadding(new Insets(20,0,0,0));
+        if(split)
+            sortLabel2.setPadding(new Insets(20,0,0,0));
 
         resetButton.setDisable(true);
         playBorder.setDisable(true);
@@ -344,12 +389,12 @@ final class SceneInitialize {
         clockLabel1.setMinWidth(60);
         clockLabel1.setAlignment(Pos.CENTER);
         clockLabel1.setStyle("-fx-font-size: 16; -fx-text-fill: rgba(72,200,160,1); -fx-font-family: Consolas; -fx-font-weight: bold;");
-
-        clockLabel2.setMaxWidth(60);
-        clockLabel2.setMinWidth(60);
-        clockLabel2.setAlignment(Pos.CENTER);
-        clockLabel2.setStyle("-fx-font-size: 16; -fx-text-fill: rgba(72,200,160,1); -fx-font-family: Consolas; -fx-font-weight: bold;");
-
+        if(split) {
+            clockLabel2.setMaxWidth(60);
+            clockLabel2.setMinWidth(60);
+            clockLabel2.setAlignment(Pos.CENTER);
+            clockLabel2.setStyle("-fx-font-size: 16; -fx-text-fill: rgba(72,200,160,1); -fx-font-family: Consolas; -fx-font-weight: bold;");
+        }
         delaySlider.setValue(delay);
         delayShowTime.setMinWidth(30);
         delayShowTime.setAlignment(Pos.CENTER);
@@ -358,9 +403,10 @@ final class SceneInitialize {
         playScene1.setAlignment(Pos.BOTTOM_CENTER);
         playScene1.setMaxSize(WIDTH,HIGH);
 
-        playScene2.setAlignment(Pos.BOTTOM_CENTER);
-        playScene2.setMaxSize(WIDTH,HIGH);
-
+        if(split) {
+            playScene2.setAlignment(Pos.BOTTOM_CENTER);
+            playScene2.setMaxSize(WIDTH, HIGH);
+        }
         delayBar.setStyle("" +
                 "-fx-background-color: rgba(32,40,48,1);" +
                 "-fx-background-radius: 25;" +
@@ -387,20 +433,20 @@ final class SceneInitialize {
 
         return scene;
     }
-    private static void setToPlay(JFXButton button) {
+    private void setToPlay(JFXButton button) {
         Platform.runLater(() -> {
             button.setText(" Play");
             button.setGraphic(ComponentTools.getSVGGraphic(SVGIcon.PLAY));
         });
     }
-    private static void setToStop(JFXButton button) {
+    private void setToStop(JFXButton button) {
         Platform.runLater(() -> {
             button.setText(" Stop");
             button.setGraphic(ComponentTools.getSVGGraphic(SVGIcon.STOP));
         });
     }
 
-    private static void changeSizeChecking() {
+    private void changeSizeChecking() {
         if(size>=UPPER_BOUND)
             moreButton.setDisable(true);
         else
@@ -409,18 +455,6 @@ final class SceneInitialize {
             lessButton.setDisable(true);
         else
             lessButton.setDisable(false);
-    }
-
-    private static <T> ObservableList<String> toStringArrayList(ObservableList<T> list) {
-        ObservableList<String> t = FXCollections.observableArrayList();
-        list.forEach(x->{
-            String s = x.toString();
-            t.add(
-                    s.substring(0,1).toUpperCase() + s.substring(1).toLowerCase()
-            );
-        });
-
-        return t;
     }
 
 }
